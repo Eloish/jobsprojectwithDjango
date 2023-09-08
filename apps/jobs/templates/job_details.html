@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<h1 class="title">{{job.title}}</h1>
+<p class="is-size-4">{{job.description}}</p>
+<p>{{job.long_description}}</p>
+<b>company_name:</b>{{job.company_name}}<br>
+{%if job.company_address %}<b>company_address:</b>{{job.company_address}}<br>{%endif%}
+{%if job.company_place %}<b>company_place:</b>{{job.company_place}}<br>{%endif%}
+{%if job.company_country %}<b>company_country:</b>{{job.company_country}}<br>{%endif%}
+<b>company_size:</b>{{job.get_company_size_display}}<br>
+<hr>
+{%if job.status == 'Active'%}
+<a href="{% url 'apply_for_job' job.id %}" class="button is-success">Apply</a>
+{%else%}
+<P>the job is not available</P>
+{%endif%}
+
+{%endblock%}

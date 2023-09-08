@@ -1,0 +1,174 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div id="editjob">
+    
+
+<h1 class="title">Edit_job form</h1>
+<form  v-on:submit="check" method="post" action=".">
+    {%csrf_token %}
+    {%if messages %}
+     {%for error in messages %}
+     <div class="nofication is-danger">
+        {{ error}}
+    </div>
+
+     {%endfor%}
+    {%endif%}
+    
+    <div class="nofication is-danger" v-if="Erros.length">
+        <p v-for="error in Erros" class="is-danger">
+            [[error]]
+        </p>
+    </div> 
+    
+    <div class="field">
+        <label for="">title</label>
+        <div class="control">
+            <input type="text" class="input" name="title" id="id_title" v-model="title">
+
+        </div>
+    </div>
+    <div class="field">
+        <label for="">description</label>
+        <div class="control">
+            <textarea  name="description" class="textarea" id="id_description" v-model="description"></textarea>
+
+        </div>
+    </div>
+    <div class="field">
+        <label for="">Long_description</label>
+        <div class="control">
+            <textarea  name="long_description" class="textarea" id="id_long_description">{% if job.long_description %}{{job.long_description}}{%endif%}</textarea>
+
+        </div>
+    </div>
+    <div class="field">
+        <label for="">company_name</label>
+        <div class="control">
+            <input type="text" class="input" name="company_name" id="id_company_name" v-model="company_name">
+
+        </div>
+    </div>
+    <div class="field">
+        <label for="">company_address</label>
+        <div class="control">
+            <input type="text" v-model="company_address" class="input" name="company_address" id="id_company_address" value="{% if job.company_address %}{{job.company_address}}{%endif%}">
+
+        </div>
+    </div>
+    <div class="field">
+        <label for="">company_place</label>
+        <div class="control">
+            <input type="text" class="input" v-model="company_place" name="company_place" id="id_company_place" value="{% if job.company_place %}{{job.company_place}}{%endif%}">
+
+        </div>
+    </div>
+    <div class="field">
+        <label for="">company_country</label>
+        <div class="control">
+            <input type="text" class="input" v-model="company_country" name="company_country" id="id_company_country" value="{% if job.company_country %}{{job.company_country}}{%endif%}">
+
+        </div>
+    </div>
+    <div class="field">
+        <label for="">company_size</label>
+        <div class="control">
+        <div class="select">
+            <select name="company_size" id="id_company_size" v-model="company_size">
+                <option value=""></option>
+                <option value="size_1_9">1_9</option>
+                <option value="size_10_49">10-49</option>
+                <option value="size_50_99">50_99</option>
+                <option value="size_100">100+</option>
+
+            </select>
+        </div>
+
+        </div>
+    </div>
+    <div class="field">
+        <label for="">Status</label>
+        <div class="control">
+        <div class="select">
+            <select name="status" id="id_company_size" v-model="status">
+                <option value=""></option>
+                <option value="Active" {% if job.status == 'Active' %} selected {%endif%}>Active</option>
+                <option value="Employed" {%if job.status == 'Employed'%} selected {%endif%}>Employed</option>
+                <option value="Archived" {%if job.status == 'Archived'%} selected {%endif%}>Archived</option>
+
+            </select>
+        </div>
+
+        </div>
+    </div>
+    
+    
+    <div class="field">
+        <div class="control">
+            <button class="button is-success"  type="submit">Save changes</button>
+        </div>
+
+    </div>
+</form>
+    
+</div>
+
+{%endblock%}
+
+{%block scripts%}
+<script>
+      const { createApp } = Vue
+      createApp({
+        data(){
+            return{
+                title:"{{job.title}}",
+                company_name:"{{job.company_name}}",
+                description:"{{job.description}}",
+                company_size:"{{job.company_size}}",
+                status:'{{job.status}}',
+                Erros:[]
+            }
+        },
+        delimiters:['[[',']]'],
+       
+        methods:{
+            check(e)
+           {
+            this.Erros=[]
+            if (this.title=='')
+            {
+                this.Erros.push('title is required')
+            }
+            if (this.description =='')
+            {
+                this.Erros.push('description is required')
+            }
+            if (this.company_name =='')
+            {
+                this.Erros.push('company_name field is required')
+            }
+            if (this.company_size==='')
+            {
+                this.Erros.push('company_size  is required')
+            }
+            if (this.Erros.length)
+            {
+                
+                e.preventDefault()
+                return false
+
+            }
+            else{
+              
+                return true
+            }
+        }
+
+    }
+  }).mount('#editjob')
+    
+ 
+</script>
+
+{%endblock%}

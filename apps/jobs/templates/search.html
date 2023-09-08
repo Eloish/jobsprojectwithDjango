@@ -1,0 +1,104 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div id="search_app">
+    <h1 class="title">Search</h1>
+    <form action="." method="post" @submit.prevent="perfomsearch()">
+        {%csrf_token%}
+        <div class="columns">
+            <div class="column is-4">
+                <div class="field">
+                    <label for="">query</label>
+                    <div class="control">
+                        <input type="text" name="query" class="input" v-model="query">
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="">compay_size</label>
+                    <div class="control">
+                        <div class="select">
+                            <select name="company_size" v-model="company_size">
+                                <option value="all" selected>All</option>
+                                <option value="size_1_9">1_9</option>
+                                <option value="size_10_49">10_49</option>
+                                <option value="size_50_99">50_99</option>
+                                <option value="size_100">100+</option>
+        
+        
+                            </select>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button class="button is-success">search</button>
+                    </div>
+                </div>
+    
+            </div>
+
+        </div>
+       
+       
+    </form>
+    <div class="jobs" v-if="jobs.length>0">
+        <hr>
+        <div v-for="job in jobs" :key='job.id' class="notification mt-2">
+            <h3 class="is-size-3">[[job.title]]</h3>
+            <p>[[job.company_name]]</p>
+            <a :href="job.url">view details</a>
+        </div>
+
+    </div>
+</div>
+
+{%endblock%}
+{%block scripts%}
+<script>
+      const { createApp } = Vue
+      createApp({
+        data(){
+            return{
+                query:"",
+                company_size:"",
+                jobs:[]
+            }
+        },
+        delimiters:['[[',']]'],
+       
+        methods:
+        {
+            perfomsearch()
+            {
+                var data={
+                    'query':this.query,
+                    'company_size':this.company_size
+                }
+                fetch('/jobs/api/search',{
+                    method:'POST',
+                    headers:{
+                        'Content_Type':'application/json',
+                        'X-CSRFToken':'{{csrf_token}}'
+                    },
+                    body:JSON.stringify(data)
+                    
+                }).then((Response)=>{
+                    
+                    return Response.json()
+                })
+                .then((result)=>{
+                    this.jobs=result.jobs
+                    console.log(this.jobs.length)
+                }).catch((err)=>{
+                    console.log(err)
+                })
+            }
+          
+        }
+  }).mount('#search_app')
+    
+ 
+</script>
+
+{%endblock%}
